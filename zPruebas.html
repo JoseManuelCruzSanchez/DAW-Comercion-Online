@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="hola">
+    <input type="submit" value="<?= $btn_value ?>" >
+    <input type="submit" value="Eliminar" onclick="this.parentNode.action = 'eliminar_usuario.php';this.parentNode.submit()">
+</form>
+<script>
+    function consola(esto) {
+        esto.parentNode.action = 'eeeee';
+    }
+</script>
+</body>
+</html>

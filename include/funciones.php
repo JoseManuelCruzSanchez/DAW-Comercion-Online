@@ -22,7 +22,7 @@ function usuarioEsCorrecto($nick, $contrasena){
     return false;
 }
 
-function mostrarFormulario($form_action, $btn_value, $nick_readonly, $nick, $contrasena, $confirmar, $nombre, $apellidos, $telefono, $direccion, $tipo){
+function mostrarFormulario($btnEliminar, $form_action, $btn_value, $nick_readonly, $nick, $nombre, $apellidos, $telefono, $direccion, $tipo){
     ?>
         <form action="<?= $form_action ?>" method="post">
             <br><br>
@@ -65,8 +65,17 @@ function mostrarFormulario($form_action, $btn_value, $nick_readonly, $nick, $con
                         <br><br>
                     <?php
                 }
+                if($btnEliminar){
+                    ?>
+                        <input type="submit" value="<?= $btn_value ?>" >
+                        <input type="submit" value="Eliminar Usuario" onclick="this.parentNode.action = 'eliminar_usuario.php';this.parentNode.submit()">
+                    <?php
+                }else{
+                    ?>
+                        <input type="submit" value="<?= $btn_value ?>" >
+                    <?php
+                }
             ?>
-            <input type="submit" value="<?= $btn_value ?>" >
         </form>
     <?php
 }
@@ -172,6 +181,21 @@ function actualizarDatosUsuarioBBDD($nick, $contrasena, $nombre, $apellidos, $te
         $sentencia = $conexion->prepare($sql);
         $sentencia->bind_param('sssssss',$nick, $contrasena, $nombre, $apellidos, $telefono, $direccion, $tipo);
     }
+    $sentencia->execute();
+    $sentencia->close();
+    $conexion->close();
+}
+
+function eliminarUsuario($nick){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+        $sql = "DELETE from usuarios WHERE nick = ?";
+        $sentencia = $conexion->prepare($sql);
+        $sentencia->bind_param('s', $nick);
+
     $sentencia->execute();
     $sentencia->close();
     $conexion->close();
