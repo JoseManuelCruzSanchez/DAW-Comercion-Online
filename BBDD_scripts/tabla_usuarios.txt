@@ -1,0 +1,5 @@
+CREATE TABLE `comercio`.`usuarios` ( `nick` VARCHAR(20) NOT NULL , `contrasena` VARCHAR(20) NOT NULL , `nombre` VARCHAR(20) NOT NULL , `apellidos` VARCHAR(50) NOT NULL , `telefono` VARCHAR(20) NOT NULL , `direccion` VARCHAR(100) NOT NULL , `tipo` ENUM('admin','cliente') NOT NULL , PRIMARY KEY (`nick`)) ENGINE = InnoDB;
+
+INSERT INTO `usuarios` (`nick`, `contrasena`, `nombre`, `apellidos`, `telefono`, `direccion`, `tipo`) VALUES ('p', 'p', 'José Manuel', 'Cruz Sánchez', '687905815', 'c/ Juan Pablo Bonet, 18', 'admin');
+
+DELETE FROM `usuarios` WHERE `usuarios`.`nick` = 'gempo';
