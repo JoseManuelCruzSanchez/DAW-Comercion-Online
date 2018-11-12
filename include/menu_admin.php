@@ -1,4 +1,4 @@
-<a href="index.php">Nuestros Productos</a>
+<a href="index.php">Galeria de Productos</a>
 <a href="mi_perfil.php">Mi perfil</a>
 <a href="gestion_usuarios.php">Gestión de usuarios</a>
 <a href="gestion_productos.php">Gestión de productos</a>

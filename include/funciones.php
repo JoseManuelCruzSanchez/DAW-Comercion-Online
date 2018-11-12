@@ -34,9 +34,11 @@ function mostrarFormulario($form_action, $btn_value, $nick_readonly, $nick, $con
                 }
             ?>
             <br><br>
-            Contraseña:<input name="contrasena" type="password" value="<?= $contrasena ?>">
+            Antigua contraseña:<input name="antigua_contrasena" type="text">
             <br><br>
-            Confirmar contraseña:<input name="confirmar" type="password" value="<?= $confirmar ?>">
+            Contraseña:<input name="contrasena" type="text">
+            <br><br>
+            Confirmar contraseña:<input name="confirmar" type="text">
             <br><br>
             Nombre:<input name="nombre" value="<?= $nombre ?>">
             <br><br>
