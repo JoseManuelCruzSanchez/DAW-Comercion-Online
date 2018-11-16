@@ -1,6 +1,7 @@
 <?php
+    require_once ("include/cabecera.php");
     require_once ("include/funciones.php");
-    session_start();
+    //session_start();
     if($_SESSION['admin'] == true){
         require_once ("include/menu_admin.php");
     }else{

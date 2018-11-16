@@ -1,6 +1,12 @@
 <?php
     require_once ("include/cabecera.php");
     require_once ("include/funciones.php");
+    echo '<br><br>';
+
+    $_SESSION['carrito'] = Array();
+    //var_dump(count($_SESSION['carrito']));
+
+
     $resultado = obtenerTablaProductos();
     while($fila = $resultado->fetch_row()){
         ?>
@@ -17,7 +23,7 @@
                 <p><?= $fila[2] ?></p>
             </div>
             <h5><?= $fila[4] ?> €</h5>
-            <div class="fab"><i class="fa fa-cart-plus fa-3x"> </i></div>
+            <div class="fab" onclick="location.href='carrito.php?referencia=<?= $fila[0] ?>'"><i class="fa fa-cart-plus fa-3x"> </i></div>
         </div>
         <br>
         <?php

@@ -1,10 +1,11 @@
 <?php
     require_once ("include/cabecera.php");
     require_once ("include/funciones.php");
+if($_SESSION['admin'] == true){
     if(isset($_POST['referencia'])){
         if($_POST['referencia'] == '' || $_POST['titulo'] == '' || $_POST['descripcion'] == '' || $_POST['precio'] == ''){
             $archivo = (isset($_FILES['ruta_imagen'])) ? $_FILES['ruta_imagen'] : null;
-            mostrarFormularioSubirProductos('subir_productos.php', 'Guardar', false, $_POST['referencia'], $_POST['titulo'], $_POST['descripcion'], '', $_POST['precio']);
+            mostrarFormularioSubirProductos('subir_productos.php', false, false, $_POST['referencia'], $_POST['titulo'], $_POST['descripcion'], '', $_POST['precio']);
         }else{
             /*Creo la carpeta que contendra las imagenes. Una carpeta por cada producto segun la referencia*/
             if(!is_dir('imagenes/' . $_POST['referencia'])){
@@ -20,6 +21,10 @@
             guardarProductoBBDD($_POST['referencia'],$_POST['titulo'],$_POST['descripcion'], $ruta_destino_archivo, $_POST['precio']);
         }
     }else{
-        mostrarFormularioSubirProductos('subir_productos.php', 'Guardar', false, '', '', '', '', '');
+        mostrarFormularioSubirProductos('subir_productos.php', false, false, '', '', '', '', '');
     }
+}else{
+    
+}
+
 

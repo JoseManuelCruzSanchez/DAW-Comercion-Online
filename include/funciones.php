@@ -22,19 +22,20 @@ function usuarioEsCorrecto($nick, $contrasena){
     return false;
 }
 
-function mostrarFormulario($btnEliminar, $form_action, $btn_value, $nick_readonly, $nick, $nombre, $apellidos, $telefono, $direccion, $tipo){
+function mostrarFormulario($esNuevoUsuario, $btnEliminar, $form_action, $nick_readonly, $nick, $nombre, $apellidos, $telefono, $direccion, $tipo){
     ?>
         <form action="<?= $form_action ?>" method="post">
             <br><br>
             <?php
-                if($nick_readonly == true){
+                if($nick_readonly){
                     echo 'Nick:<input name="nick" value="' . $nick . '" readonly>';
                 }else{
                     echo 'Nick:<input name="nick" value="' . $nick . '">';
                 }
+                if($esNuevoUsuario == false){
+                    echo '<br><br>Antigua contraseña:<input name="antigua_contrasena" type="text">';
+                }
             ?>
-            <br><br>
-            Antigua contraseña:<input name="antigua_contrasena" type="text">
             <br><br>
             Contraseña:<input name="contrasena" type="text">
             <br><br>
@@ -65,14 +66,16 @@ function mostrarFormulario($btnEliminar, $form_action, $btn_value, $nick_readonl
                         <br><br>
                     <?php
                 }
-                if($btnEliminar){
+                if($btnEliminar == 'eliminar_usuario.php'){
                     ?>
-                        <input type="submit" value="<?= $btn_value ?>" >
-                        <input type="submit" value="Eliminar Usuario" onclick="this.parentNode.action = 'eliminar_usuario.php';this.parentNode.submit()">
+                        <button  class="boton" type="submit"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                        <button  class="boton" onclick="this.parentNode.action = 'eliminar_usuario.php';this.parentNode.submit()"><i class="fa fa-trash" aria-hidden="true"></i></button>
+
                     <?php
                 }else{
                     ?>
-                        <input type="submit" value="<?= $btn_value ?>" >
+                        <button class="boton" type="submit"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                        <button class="boton"  onclick="this.parentNode.action = 'eliminarse_a_si_mismo.php';this.parentNode.submit()">Darme de baja</button>
                     <?php
                 }
             ?>
@@ -202,7 +205,7 @@ function eliminarUsuario($nick){
 }
 
 /*************************************            PRODUCTOS               *******************************************/
-function mostrarFormularioSubirProductos($form_action, $btn_value, $referencia_readonly, $referencia, $titulo, $descripcion, $ruta_imagen, $precio){
+function mostrarFormularioSubirProductos($form_action, $btn_delete, $referencia_readonly, $referencia, $titulo, $descripcion, $ruta_imagen, $precio){
     ?>
     <form action="<?= $form_action ?>" method="post"  enctype="multipart/form-data">
         <br><br>
@@ -218,11 +221,28 @@ function mostrarFormularioSubirProductos($form_action, $btn_value, $referencia_r
         <br><br>
         Descripción:<input name="descripcion" value="<?= $descripcion ?>">
         <br><br>
-        Imágen:<input type="file" name="ruta_imagen" id="prueba"  multiple="multiple" value="<?= $ruta_imagen ?>">
+        <?php
+            if($ruta_imagen != ''){
+                ?>
+                    <img src="<?= $ruta_imagen ?>">
+                <?php
+            }else{
+                ?>
+                Imágen:<input type="file" name="ruta_imagen" id="prueba"  multiple="multiple" value="<?= $ruta_imagen ?>">
+                <?php
+            }
+        ?>
         <br><br>
         Precio:<input type="number" name="precio" value="<?= $precio ?>">
         <br><br>
-        <input type="submit" value="<?= $btn_value ?>" >
+        <button class="boton" type="submit"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+        <?php
+            if($btn_delete == true){
+                ?>
+                <button class="boton"  onclick="this.parentNode.action = 'eliminar_producto.php';this.parentNode.submit()"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                <?php
+            }
+        ?>
     </form>
     <?php
 }
@@ -243,9 +263,6 @@ function guardarProductoBBDD($referencia, $titulo, $descripcion, $ruta_imagen, $
     $conexion->close();
 }
 
-
-
-/*************************************            GALERIA               *******************************************/
 function obtenerTablaProductos(){
     $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
     mysqli_set_charset($conexion, 'utf8');
@@ -253,6 +270,97 @@ function obtenerTablaProductos(){
         die("La conexion ha fallado" . $conexion->connect_error);
     }
     $sql = "select * from productos";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->execute();
+    $resultado = $sentencia->get_result();
+    $conexion->close();
+    $sentencia->close();
+    return $resultado;
+}
+
+function actualizarDatosProductoBBDD($referencia, $titulo, $descripcion, $precio){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+    $sql = "UPDATE productos SET referencia = ?, titulo = ?, descripcion = ?, precio = ? WHERE referencia like '$referencia'";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bind_param('sssi',$referencia, $titulo, $descripcion, $precio);
+    $sentencia->execute();
+    $sentencia->close();
+    $conexion->close();
+}
+
+function eliminarProducto($referencia){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+    $sql = "DELETE from productos WHERE referencia = ?";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bind_param('s', $referencia);
+
+    $sentencia->execute();
+    $sentencia->close();
+    $conexion->close();
+}
+
+/*************************************            CARRITO               *******************************************/
+function cantidadItemsQueUnUsuarioTieneDeUnProducto($nick, $referencia){
+        $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+        mysqli_set_charset($conexion, 'utf8');
+        if($conexion->connect_error){
+            die("La conexion ha fallado" . $conexion->connect_error);
+        }
+        $sql = "select cantidad from carrito where nick = ? and referencia = ?";
+        $sentencia = $conexion->prepare($sql);
+        $sentencia->bind_param('ss', $nick, $referencia);
+        $sentencia->execute();
+        $cantidad = $sentencia->get_result()->fetch_row()[0];
+        $conexion->close();
+        $sentencia->close();
+        return $cantidad;
+}
+
+function guardarItemCarritoBBDD($nick, $referencia, $cantidadItems){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+    $sql = "INSERT INTO carrito (nick, referencia, cantidad) VALUES (?, ?, ?)";
+
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bind_param('ssi', $nick, $referencia, $cantidadItems);
+    $sentencia->execute();
+
+    $sentencia->close();
+    $conexion->close();
+}
+
+function sumarItemEnCarrito($nick, $referencia, $cantidadItems){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+    $sql = "UPDATE carrito SET cantidad = ? WHERE nick like '$nick' and referencia like '$referencia'";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bind_param('i', $cantidadItems);
+    $sentencia->execute();
+    $sentencia->close();
+    $conexion->close();
+}
+
+function itemsEnCarritoDeUsuario($nick){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if($conexion->connect_error){
+        die("La conexion ha fallado" . $conexion->connect_error);
+    }
+    $sql = "select * from carrito where nick like '$nick'";
     $sentencia = $conexion->prepare($sql);
     $sentencia->execute();
     $resultado = $sentencia->get_result();
