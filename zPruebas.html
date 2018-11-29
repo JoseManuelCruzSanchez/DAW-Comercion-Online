@@ -3,16 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script>
+        var x;
+        function showHint(str) {
+            if (str.length == 0) {
+                document.getElementById("txtHint").innerHTML = "";
+                return;
+            } else {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("txtHint").innerHTML = this.responseText;
+                        console.log(this)
+                        x = Array.from(this);
+                    }
+                }
+                xmlhttp.open("GET", "zPruebas.php?q="+str, true);
+                xmlhttp.send();
+            }
+        }
+    </script>
 </head>
 <body>
-<form action="hola">
-    <input type="submit" value="<?= $btn_value ?>" >
-    <input type="submit" value="Eliminar" onclick="this.parentNode.action = 'eliminar_usuario.php';this.parentNode.submit()">
+
+<p><b>Start typing a name in the input field below:</b></p>
+<form>
+    First name: <input type="text" onkeyup="showHint(this.value)">
 </form>
-<script>
-    function consola(esto) {
-        esto.parentNode.action = 'eeeee';
-    }
-</script>
+<p>Suggestions: <span id="txtHint"></span></p>
 </body>
 </html>

@@ -38,3 +38,82 @@
     position:relative;
     top:1px;
 }
+/**********************************************  CARRITO     *********************************************************/
+/*********************************************************************************************************************/
+.cont-general-carrito{
+    padding: 5%;
+}
+.cont-producto-carrito{
+    border-bottom: 1px solid grey;
+    padding: 10px;
+    display: inline-block;
+    float: left;
+    min-width: 650px;
+    margin-right: 5%;
+
+}
+.cont-producto-carrito > img{
+    width: 80px;
+    float: left;
+}
+.cont-producto-carrito > div{
+    float: left;
+
+}
+.cont-producto-carrito > div > h3{
+    font-size: 2em;
+    margin: 0px 40px;
+    color: grey;
+}
+.cont-producto-carrito > div > h4{
+    font-size: 1.5em;
+    margin: 0px 40px;
+}
+.cont-producto-carrito > form{
+    float: right;
+    margin-left: 15px;
+    margin-top: 2%;
+}
+.cont-producto-carrito > form > input{
+    display: none;
+}
+.cont-producto-carrito > form > button{
+    /*RESETEO TODOS LOS ESTILOS DE BUTTON*/
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    /*RESETEO TODOS LOS ESTILOS DE BUTTON*/
+}
+.cont-producto-carrito > form > button > i{
+    font-size: 3em;
+    color: #b10517;
+}
+/**********  CONTENEDOR FACTURA CARRITO  ***********/
+form.cont-factura-carrito{
+    display: inline-block;
+    padding: 2% 2%;
+    min-width: 200px;
+    min-height: 200px;
+    /*background-color: orange;*/
+    border: 1px solid grey;
+    float: right;
+}
+form.cont-factura-carrito th{
+    color: darkgreen;
+    border-bottom: 2px solid darkgreen;
+    font-size: 1.2em;
+}
+form.cont-factura-carrito th, td{
+    padding: 5px;
+    text-align: center;
+}
+form.cont-factura-carrito td:first-child{
+    text-align: left;
+}
+form.cont-factura-carrito > h2{
+    font-size: 1.5em;
+}

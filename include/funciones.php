@@ -278,6 +278,21 @@ function obtenerTablaProductos(){
     return $resultado;
 }
 
+function obtenerUnSoloProducto($referencia){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if($conexion->connect_error){
+        die("La conexion ha fallado" . $conexion->connect_error);
+    }
+    $sql = "select * from productos where referencia like '$referencia'";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->execute();
+    $resultado = $sentencia->get_result();
+    $conexion->close();
+    $sentencia->close();
+    return $resultado;
+}
+
 function actualizarDatosProductoBBDD($referencia, $titulo, $descripcion, $precio){
     $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
     mysqli_set_charset($conexion, 'utf8');
@@ -354,6 +369,24 @@ function sumarItemEnCarrito($nick, $referencia, $cantidadItems){
     $conexion->close();
 }
 
+function restarItemEnCarrito($nick, $referencia, $cantidadItems){
+    sumarItemEnCarrito($nick, $referencia, $cantidadItems);
+}
+
+function eliminarItemCarrito($nick, $referencia){/***************************************************************************/
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+    $sql = "DELETE from carrito WHERE nick = ? and referencia = ?";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bind_param('ss', $nick, $referencia);
+    $sentencia->execute();
+    $sentencia->close();
+    $conexion->close();
+}
+
 function itemsEnCarritoDeUsuario($nick){
     $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
     mysqli_set_charset($conexion, 'utf8');
@@ -367,4 +400,60 @@ function itemsEnCarritoDeUsuario($nick){
     $conexion->close();
     $sentencia->close();
     return $resultado;
+}
+
+function mostrarProductosEnCarrito($ruta_imagen, $titulo, $precio, $referencia){
+    ?>
+    <div class="cont-producto-carrito">
+        <img src="<?= $ruta_imagen ?>"><!--ruta imagen-->
+        <div>
+            <h3><?= $titulo ?></h3><!--titulo-->
+            <h4><?= $precio ?> €</h4><!--precio-->
+        </div>
+        <form action="eliminar_producto_de_carrito.php" method="post"><!--********************************  action y post  ***************************-->
+            <input type="text" name="referencia" value="<?= $referencia ?>"><!--referencia-->
+            <button type="submit">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
+        </form>
+    </div>
+    <?php
+}
+
+function mostrarRecuadroListaPrecioTotalCarrito($nick){
+
+    ?>
+        <form class="cont-factura-carrito" action="finalizar_compra_carrito.php" method="post">
+            <h3>Resumen de tu compra:</h3>
+			<table>
+				<tr>
+					<th>Nombre del producto</th>
+					<th>Cantidad</th>
+					<th>Precio</th>
+				</tr>
+
+                <?php
+                     $precio_total_carrito = 0;
+                     $resultado_items_carrito = itemsEnCarritoDeUsuario($nick);
+                     while($fila_carrito = $resultado_items_carrito->fetch_row()){
+                         $fila_un_producto = obtenerUnSoloProducto($fila_carrito[1])->fetch_row();
+                         ?>
+                         <tr>
+                             <td><?= $fila_un_producto[1] ?></td>
+                             <td>x<?= $fila_carrito[2] ?></td>
+                             <td><?= $fila_carrito[2]*$fila_un_producto[4] ?> €</td>
+                         </tr>
+                         <?php
+                         $precio_total_carrito += $fila_carrito[2]*$fila_un_producto[4];
+                     }
+                ?>
+
+			</table>
+            <h2>SubTotal = <?= $precio_total_carrito ?> €</h2>
+            <h2>IVA(21%) = <?= $precio_total_carrito*0.21 ?> €</h2>
+			<h2>Total = <?= $precio_total_carrito+$precio_total_carrito*0.21 ?> €</h2>
+            <input style="display: none" type="text" name="precio_total" value="<?= $precio_total_carrito+$precio_total_carrito*0.21 ?>">
+			<button type="submit">Finalizar compra</button>
+		</form>
+    <?php
 }

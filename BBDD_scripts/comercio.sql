@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-11-2018 a las 18:55:03
+-- Tiempo de generación: 30-10-2018 a las 19:01:57
 -- Versión del servidor: 10.1.21-MariaDB
 -- Versión de PHP: 5.6.30
 
@@ -19,29 +19,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `comercio`
 --
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `carrito`
---
-
-CREATE TABLE `carrito` (
-  `nick` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
-  `referencia` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
-  `cantidad` int(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Volcado de datos para la tabla `carrito`
---
-
-INSERT INTO `carrito` (`nick`, `referencia`, `cantidad`) VALUES
-('a', 'Producto_1', 1),
-('Martin', 'Producto_1', 1),
-('p', 'Producto_1', 14),
-('p', 'Producto_2', 8),
-('p', 'referencia', 2);
 
 -- --------------------------------------------------------
 
@@ -62,9 +39,8 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`referencia`, `titulo`, `descripcion`, `ruta_imagen`, `precio`) VALUES
-('Producto_1', 'Este producto', 'Una descripcion cualquiera', 'imagenes/Producto_1/1.jpg', 159),
-('Producto_2', 'as', 'as', 'imagenes/Producto_2/3.jpg', 654),
-('referencia', 'asdf', 'asdf', 'imagenes/referencia/1.jpg', 987);
+('81866358', 'Lámpara de pie LED WAVE', 'Lámpara de pie con 1 luz, fabricada en metal de color metálico y estilo moderno, tecnología LED integrado. Ideal para decorar y crear una luz ambiental y acogedora en su salón u otras estancias. Dispone de IP23 indicado para uso en interior.', 'imagenes/81866358/1.jpg', 34),
+('81884042', 'Lámpara de pie LED POLINA', 'Lámpara de pie LED recta de estilo moderno de 2 luces, con una potencia de 23 W con un tono de luz cálido. Produce un flujo luminoso de 1480 lúmenes. Fabricada en metal con acabado en color gris. Clasificación energética A. Medidas: 136 cm de altura ', 'imagenes/81884042/1.jpg', 220);
 
 -- --------------------------------------------------------
 
@@ -87,18 +63,17 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`nick`, `contrasena`, `nombre`, `apellidos`, `telefono`, `direccion`, `tipo`) VALUES
-('gempo', 'g', 'josess', 'cruz', '35345345', 'av sagasta', 'cliente'),
+('Andres', 'b', 'Andres', 'Perete Perete', '654987341', 'calle de los juares', 'admin'),
+('Andres1', 'a', 'Andres', 'Perete Perete', '321654987', 'calle de los juares', 'admin'),
+('Andres2', 'a', 'Andres', 'Perete Perete', '321654987', 'calle de los juares', 'cliente'),
+('gempo3', 'asd', 'Jose', 'cruz', '687905815', 'juan pablo bonet', 'cliente'),
+('iñigo', 'ab', 'abasdf', 'abasdf', 'ab', 'abasdf', 'cliente'),
+('Martin', 'asd', 'Martin', 'SÃ¡nchez Heras', '987654321', 'av salamanca 3', 'cliente'),
 ('p', 'p', 'José Manuel', 'Cruz Sánchez', '687905815', 'c/ Juan Pablo Bonet, 18', 'admin');
 
 --
 -- Índices para tablas volcadas
 --
-
---
--- Indices de la tabla `carrito`
---
-ALTER TABLE `carrito`
-  ADD PRIMARY KEY (`nick`,`referencia`);
 
 --
 -- Indices de la tabla `productos`

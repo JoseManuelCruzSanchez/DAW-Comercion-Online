@@ -12,10 +12,15 @@ if(isset($_GET['referencia'])){
     header("Location: galeria.php");
 }else{/*Si el usuario entra directamente a carrito a traves del enlace en el menu*/
     $resultado = itemsEnCarritoDeUsuario($_SESSION['nick']);
+    echo '<div class="cont-general-carrito">';
+    mostrarRecuadroListaPrecioTotalCarrito($_SESSION['nick']);
     while ($fila = $resultado->fetch_row()){
-        echo '<br>';
-        echo $fila[1] . ' ' . $fila[2];
+        $fila_resultado_producto = obtenerUnSoloProducto($fila[1])->fetch_row();
+        for($i = 0; $i < $fila[2]; $i++){
+            mostrarProductosEnCarrito($fila_resultado_producto[3], $fila_resultado_producto[1], $fila_resultado_producto[4], $fila_resultado_producto[0]);
+        }
     }
+    echo '</div>';
 }
 
 

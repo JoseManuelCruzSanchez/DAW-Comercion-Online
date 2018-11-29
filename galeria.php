@@ -3,10 +3,6 @@
     require_once ("include/funciones.php");
     echo '<br><br>';
 
-    $_SESSION['carrito'] = Array();
-    //var_dump(count($_SESSION['carrito']));
-
-
     $resultado = obtenerTablaProductos();
     while($fila = $resultado->fetch_row()){
         ?>

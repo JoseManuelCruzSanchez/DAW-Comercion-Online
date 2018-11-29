@@ -24,7 +24,7 @@ if($_SESSION['admin'] == true){
         mostrarFormularioSubirProductos('subir_productos.php', false, false, '', '', '', '', '');
     }
 }else{
-    
+
 }
 
 
