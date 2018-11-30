@@ -6,6 +6,7 @@
         <li><a href="gestion_productos.php">Gestión de productos</a></li>
         <li><a href="subir_productos.php">Subir productos</a></li>
         <li><a href="carrito.php"><i class="fa fa-shopping-cart"></i></a></li>
+        <li><a href="historico.php">Historico</a></li>
         <li><a href="cerrar_sesion.php">Cerrar sesión</a></li>
     </ul>
 </div>

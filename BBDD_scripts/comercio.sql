@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 30-10-2018 a las 19:01:57
+-- Tiempo de generación: 30-11-2018 a las 19:27:52
 -- Versión del servidor: 10.1.21-MariaDB
 -- Versión de PHP: 5.6.30
 
@@ -19,6 +19,55 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `comercio`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `carrito`
+--
+
+CREATE TABLE `carrito` (
+  `nick` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
+  `referencia` varchar(100) CHARACTER SET utf8 COLLATE utf8_spanish_ci NOT NULL,
+  `cantidad` int(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `carrito`
+--
+
+INSERT INTO `carrito` (`nick`, `referencia`, `cantidad`) VALUES
+('a', 'Producto_1', 1),
+('Martin', 'Producto_1', 1),
+('p', 'Producto_1', 1),
+('p', 'Producto_2', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `historico`
+--
+
+CREATE TABLE `historico` (
+  `id` int(11) NOT NULL,
+  `nick` varchar(100) NOT NULL,
+  `importe` varchar(100) NOT NULL,
+  `fecha` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `historico`
+--
+
+INSERT INTO `historico` (`id`, `nick`, `importe`, `fecha`) VALUES
+(1, 'd', '192.39', '2018-11-30 17:08:38.542166'),
+(2, 'd', '192.39', '2018-11-30 17:10:21.641063'),
+(3, 'd', '1985.61', '2018-11-30 17:10:35.094832'),
+(4, 'd', '3757.05', '2018-11-30 17:19:47.985456'),
+(5, 'd', '192.39', '2018-11-30 17:33:21.445983'),
+(6, 'gempo', '3372.27', '2018-11-30 17:52:17.795978'),
+(7, 'gempo', '3372.27', '2018-11-30 17:57:48.194876'),
+(8, 'gempo', '192.39', '2018-11-30 17:58:03.199734');
 
 -- --------------------------------------------------------
 
@@ -39,8 +88,9 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`referencia`, `titulo`, `descripcion`, `ruta_imagen`, `precio`) VALUES
-('81866358', 'Lámpara de pie LED WAVE', 'Lámpara de pie con 1 luz, fabricada en metal de color metálico y estilo moderno, tecnología LED integrado. Ideal para decorar y crear una luz ambiental y acogedora en su salón u otras estancias. Dispone de IP23 indicado para uso en interior.', 'imagenes/81866358/1.jpg', 34),
-('81884042', 'Lámpara de pie LED POLINA', 'Lámpara de pie LED recta de estilo moderno de 2 luces, con una potencia de 23 W con un tono de luz cálido. Produce un flujo luminoso de 1480 lúmenes. Fabricada en metal con acabado en color gris. Clasificación energética A. Medidas: 136 cm de altura ', 'imagenes/81884042/1.jpg', 220);
+('Producto_1', 'Lampara de pasillo', 'Una descripcion cualquiera', 'imagenes/Producto_1/1.jpg', 159),
+('Producto_2', 'Lampara de nochevieja', 'as', 'imagenes/Producto_2/3.jpg', 654),
+('referencia', 'Lampara para gran salon', 'asdf', 'imagenes/referencia/1.jpg', 987);
 
 -- --------------------------------------------------------
 
@@ -63,17 +113,27 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`nick`, `contrasena`, `nombre`, `apellidos`, `telefono`, `direccion`, `tipo`) VALUES
-('Andres', 'b', 'Andres', 'Perete Perete', '654987341', 'calle de los juares', 'admin'),
-('Andres1', 'a', 'Andres', 'Perete Perete', '321654987', 'calle de los juares', 'admin'),
-('Andres2', 'a', 'Andres', 'Perete Perete', '321654987', 'calle de los juares', 'cliente'),
-('gempo3', 'asd', 'Jose', 'cruz', '687905815', 'juan pablo bonet', 'cliente'),
-('iñigo', 'ab', 'abasdf', 'abasdf', 'ab', 'abasdf', 'cliente'),
-('Martin', 'asd', 'Martin', 'SÃ¡nchez Heras', '987654321', 'av salamanca 3', 'cliente'),
-('p', 'p', 'José Manuel', 'Cruz Sánchez', '687905815', 'c/ Juan Pablo Bonet, 18', 'admin');
+('amigo', '123456', 'amigos', 'amigo', '55555', 'c/ Juan Pablo Bonet, 18', 'admin'),
+('d', 'd', 'Dionisio', 'Gonzalez', '63215498', 'calle de las mesas', 'cliente'),
+('fran', 'f', 'Francisco', 'Navarro', '66666666', 'c/ Juan Pablo Bonet, 18', 'admin'),
+('gempo', '123456', 'Maria', 'De la Huerta', '66666666', 'c/ Juan Pablo Bonet, 18', 'admin'),
+('p', '1', '1', '1', '1', '1', 'cliente');
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `carrito`
+--
+ALTER TABLE `carrito`
+  ADD PRIMARY KEY (`nick`,`referencia`);
+
+--
+-- Indices de la tabla `historico`
+--
+ALTER TABLE `historico`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `productos`
@@ -87,6 +147,15 @@ ALTER TABLE `productos`
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`nick`);
 
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `historico`
+--
+ALTER TABLE `historico`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

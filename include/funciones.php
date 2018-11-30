@@ -37,9 +37,9 @@ function mostrarFormulario($esNuevoUsuario, $btnEliminar, $form_action, $nick_re
                 }
             ?>
             <br><br>
-            Contraseña:<input name="contrasena" type="text">
+            Contraseña:<input name="contrasena" type="text" minlength="6">
             <br><br>
-            Confirmar contraseña:<input name="confirmar" type="text">
+            Confirmar contraseña:<input name="confirmar" type="text" minlength="6">
             <br><br>
             Nombre:<input name="nombre" value="<?= $nombre ?>">
             <br><br>
@@ -420,6 +420,20 @@ function mostrarProductosEnCarrito($ruta_imagen, $titulo, $precio, $referencia){
     <?php
 }
 
+function resetearCarritoDeUsuario($nick){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+    $sql = "DELETE from carrito WHERE nick = ?";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bind_param('s', $nick);
+    $sentencia->execute();
+    $sentencia->close();
+    $conexion->close();
+}
+
 function mostrarRecuadroListaPrecioTotalCarrito($nick){
 
     ?>
@@ -457,3 +471,188 @@ function mostrarRecuadroListaPrecioTotalCarrito($nick){
 		</form>
     <?php
 }
+/*************************************            FACTURA               *******************************************/
+function mostrarFactura($nick){/* https://codepen.io/uminily/pen/GrWPmw */
+    $usuario = obtenerDatosUsuarios($nick)->fetch_row();
+
+?>
+    <div class="container">
+        <div class="invoice">
+            <div class="row">
+                <div class="col-5">
+                    <h1 class="document-type display-4">FACTURA</h1>
+                    <p class="text-right"><strong>N° 00000<?= numeroUltimoRegistroHistoricos() ?></strong></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-7">
+                    <p>
+                        <strong>Zaragoza</strong><br>
+                        Calle de los buenos, 31 bajo Dcha<br>
+                        50002 Zaragoza, España
+                    </p>
+                </div>
+                <div class="col-5">
+                    <br><br><br>
+                    <p>
+                        <strong><?= $usuario[2] . " " . $usuario[3] ?></strong><br>
+                        <em>Telefono: </em><?= $usuario[4] ?><br>
+                        <em>Dirección: </em><?= $usuario[5] ?><br>
+                    </p>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                $precio_total_carrito = 0;
+                $resultado_items_carrito = itemsEnCarritoDeUsuario($nick);
+                while($fila_carrito = $resultado_items_carrito->fetch_row()){
+                    $fila_un_producto = obtenerUnSoloProducto($fila_carrito[1])->fetch_row();
+                    ?>
+                    <tr>
+                        <td><?= $fila_un_producto[1] ?></td>
+                        <td>x<?= $fila_carrito[2] ?></td>
+                        <td><?= $fila_carrito[2]*$fila_un_producto[4] ?> €</td>
+                    </tr>
+                    <?php
+                    $precio_total_carrito += $fila_carrito[2]*$fila_un_producto[4];
+                }
+                ?>
+                </tbody>
+            </table>
+            <br><br>
+            <div class="row">
+                <div class="col-8">
+                </div>
+                <div class="col-4">
+                    <table class="table table-sm text-right">
+                        <tr>
+                            <td><strong>SubTotal</strong></td>
+                            <td class="text-right"><?= $precio_total_carrito ?> €</td>
+                        </tr>
+                        <tr>
+                            <td>TVA 21%</td>
+                            <td class="text-right"><?= $precio_total_carrito*0.21 ?> €</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total</strong></td>
+                            <td class="text-right"><?= $precio_total_carrito+$precio_total_carrito*0.21 ?> €</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <p class="conditions">
+                En votre aimable règlement
+                <br>
+                Et avec nos remerciements.
+                <br><br>
+                Conditions de paiement : paiement à réception de facture, à 15 jours.
+                <br>
+                Aucun escompte consenti pour règlement anticipé.
+                <br>
+                Règlement par virement bancaire.
+                <br><br>
+                En cas de retard de paiement, indemnité forfaitaire pour frais de recouvrement : 40 euros (art. L.4413 et L.4416 code du commerce).
+            </p>
+
+            <br>
+            <br>
+            <br>
+            <br>
+
+            <p class="bottom-page text-right">
+                90TECH SAS - N° SIRET 80897753200015 RCS METZ<br>
+                6B, Rue aux Saussaies des Dames - 57950 MONTIGNY-LES-METZ 03 55 80 42 62 - www.90tech.fr<br>
+                Code APE 6201Z - N° TVA Intracom. FR 77 808977532<br>
+                IBAN FR76 1470 7034 0031 4211 7882 825 - SWIFT CCBPFRPPMTZ
+            </p>
+        </div>
+    </div>
+<?php
+}
+/*************************************            HISTORICOS               *******************************************/
+function guardarFacturaHistoricos($nick, $importe){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if ($conexion->connect_error) {
+        die("La conexión ha fallado " . $conexion->connect_error);
+    }
+    $sql = "INSERT INTO historico (nick, importe) VALUES (?, ?)";
+
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->bind_param('ss', $nick, $importe);
+    $sentencia->execute();
+
+    $sentencia->close();
+    $conexion->close();
+}
+
+function numeroUltimoRegistroHistoricos(){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if($conexion->connect_error){
+        die("La conexion ha fallado" . $conexion->connect_error);
+    }
+    $sql = "select count(*) from historico";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->execute();
+    $resultado = $sentencia->get_result();
+    $conexion->close();
+    $sentencia->close();
+    return $resultado->fetch_row()[0];
+}
+
+function obtenerRegistrosHistoricoDeUnUsuario($nick){
+    $conexion = new mysqli(DB_HOST, DB_USUARIO, DB_PASS, DB_NOMBRE_BASE_DATOS);
+    mysqli_set_charset($conexion, 'utf8');
+    if($conexion->connect_error){
+        die("La conexion ha fallado" . $conexion->connect_error);
+    }
+    $sql = "select * from historico where nick like '$nick'";
+    $sentencia = $conexion->prepare($sql);
+    $sentencia->execute();
+    $resultado = $sentencia->get_result();
+    $conexion->close();
+    $sentencia->close();
+    return $resultado;
+}
+
+function mostrarListadoHistoricoDeUnUsuario($nick){
+    $resultado = obtenerRegistrosHistoricoDeUnUsuario($nick);
+    ?>
+    <div class="cont-general-historico">
+        <h1>Este es tu historial de compras con nosotros, agradecemos tu confianza</h1>
+        <table>
+            <tr>
+                <th>Nº Factura</th>
+                <th>Importe</th>
+                <th>Fecha factura</th>
+            </tr>
+
+            <?php
+                 while($fila = $resultado->fetch_row()){
+                     ?>
+                     <tr>
+                         <td>0000<?= $fila[0] ?></td>
+                         <td><?= $fila[2] ?> €</td>
+                         <td><?= $fila[3] ?> </td>
+                     </tr>
+                     <?php
+                 }
+            ?>
+        </table>
+    </div>
+<?php
+}
+

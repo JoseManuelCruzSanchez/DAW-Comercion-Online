@@ -117,3 +117,42 @@ form.cont-factura-carrito td:first-child{
 form.cont-factura-carrito > h2{
     font-size: 1.5em;
 }
+/**********************************************  CARRITO     *********************************************************/
+/*********************************************************************************************************************/
+.container {
+    width: 21cm;
+    min-height: 29.7cm;
+    margin: 0 auto;
+}
+
+.invoice {
+    background: #fff;
+    width: 100%;
+    padding: 50px;
+}
+
+.logo {
+    width: 2.5cm;
+}
+
+.document-type {
+    text-align: right;
+    color: #444;
+}
+
+.conditions {
+    font-size: 0.7em;
+    color: #666;
+}
+
+.bottom-page {
+    font-size: 0.7em;
+}
+/**********************************************  CARRITO     *********************************************************/
+/*********************************************************************************************************************/
+.cont-general-historico{
+    text-align: center;
+}
+.cont-general-historico > table{
+    margin: 0 auto;
+}
